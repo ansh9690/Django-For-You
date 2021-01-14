@@ -1,0 +1,75 @@
+{% extends 'home/base.html' %}
+{% load static %}
+{% block title %}Home{% endblock title %}
+{% block css %}
+
+{% endblock css %}
+
+{% block body %}
+<main class="container">
+  <div class="p-4 p-md-5 mb-4 text-white rounded bg-dark">
+    <div class="col-md-6 px-0">
+      <h1 class="lead my-1" style="color:#34baeb;font-size:40px;">Anshu Prakash</h1>
+      <p style="font-size:20px; margin-left:100px;">Full Stack Developer</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8">
+      <h3 class="pb-4 mb-4 mt-4 font-italic border-bottom">
+        Recent Post
+      </h3>
+          {% for post in post %}
+          <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            <div class="col p-4 d-flex flex-column position-static">
+              <h4 class="mb-2">{{ post.title| truncatechars:100 }}</h4>
+              <p class="card-text mb-auto">{{ post.body| truncatechars:300 }}<a href="{% url 'home:post_detail' post.pk %}" class="stretched-link" style="color:#34baeb;">...continue reading</a></p>
+              
+              <div class="post-meta">
+                <span class="d-block float-end"><a href="#">{{ post.author }}</a></span>
+                <span class="date-read">{{ post.timeStamp|date:"d F Y" }} <span class="mx-1">•</span> {{post.read_time}} read <span class="icon-star2"></span></span>
+              </div>
+            </div>
+            <div class="col-auto d-none d-lg-block">
+              <img class="bd-placeholder-img circle" width="200" height="250" src="{% static 'images/download.jpg' %}" style="filter: blur(3px);"></img>
+
+            </div>
+          </div> 
+          {% endfor %}
+
+          {% if post.has_other_pages %}
+            <ul class="pagination float-between">
+                {% if post.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ post.previous_page_number }}"  aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+                <li class="page-item"><a class="page-link" href="?page={{ post.number }}">{{ post.number }}</a></li>
+
+                {% if post.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ post.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+          {% endif %}
+        </div>
+
+      <div class="col-md-4">
+        <div class="p-4 mb-3 bg-light rounded">
+          <h4 class="font-italic">About</h4>
+          <p class="mb-0">Hello! I am Anshu Prakash, a final-year Undergraduate pursing B.Tech in Computer Science and Engineering from IIITDM Jabalpur. I am a full stack developer.</p>
+        </div>
+
+        {% include 'home/trending_post.html' %}
+        
+    </div>
+    
+  </div><!-- /.row -->
+
+</main><!-- /.container -->
+{% endblock body %}

@@ -1,0 +1,111 @@
+{% extends 'home/base.html' %}
+{% load static %}
+{% block title %}Home{% endblock title %}
+{% block css %}
+
+{% endblock css %}
+
+{% block body %}
+<main class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <article class="blog-post mt-3">
+      <h2 class="blog-post-title">{{ post.title }}</h2>
+      <div class="float-end">
+          <form action="{% url 'home:like_post' post.pk %}" method="POST">
+            {% csrf_token %}
+            {% if user.is_authenticated %}
+              {% if user in post.likes.all %}
+              <button type="submit", name="post_id", value="{{ post.id }}", class="btn btn-danger btn-sm me-2" disabled>Liked</button>
+              {% else %}
+              <button type="submit", name="post_id", value="{{ post.id }}", style="background-color:#34baeb; color:white;" class="btn btn-sm me-2">like</button>
+              {% endif %}
+            {% else %}
+              <small><a href="{% url 'accounts:login' %}" class="me-2" style="color:#34baeb;">Like</a></small>
+            {% endif %}
+            {{ post.post_total_likes }} Likes
+          </form>
+      </div>
+      		
+      <p class="blog-post-meta">{{ post.timeStamp|date:"d F Y" }} by <a style="color: #34baeb;">{{ post.author }}</a></p>
+
+      <p>{{ post.body }}</p>
+      </article>  
+
+      <h4 class="mb-3">
+      {{comments.count}} Comments
+      </h4>        
+      <div class="d-flex flex-column comment-section">
+          {% for comment in comments %}
+          <div class="p-2 pb-0">
+              <div class="d-flex flex-row user-info"><img class="rounded-circle me-3" src="{% static 'images/download.jpg' %}" width="40" height="40">
+                  <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name">{{comment.user.username|title}}
+                  </span>
+                  <span class="date text-black-50">{{comment.date_added|date:"d F Y"}}</span></div>
+              </div>
+              <div class="mt-2" style="margin-left:55px;">
+                  <p class="comment-text">{{comment.body}}</p>
+              </div>
+          </div>
+          
+          <div style="margin-left:55px;">
+              <div class="d-flex flex-row fs-12">
+
+                  <form action="{% url 'home:like_comment' comment.pk %}" method="POST">
+                    {% csrf_token %}
+                    {% if user.is_authenticated %}
+                      {% if user in comment.likes.all %}
+                      <input type="hidden" name="post_id" value="{{ post.id }}">
+                      <button type="submit" name="comment_id" value="{{ comment.id }}" class="btn btn-sm me-2" style="color:red;">Unlike</button>
+                      {% else %}
+                      <input type="hidden" name="post_id" value="{{ post.id }}">
+                      <button type="submit" name="comment_id" value="{{ comment.id }}" class="btn btn-sm me-2" style="background-color:#34baeb; color:white;">like</button>
+                      {% endif %}
+                    {% else %}
+                      <a href="{% url 'accounts:login' %}" class="me-2" style="color:#34baeb;">Like</a>
+                    {% endif %}
+                    {{ comment.comment_total_likes }} Likes
+                  </form>
+
+              </div>
+          </div>
+          {% endfor %}
+
+          <h3 class="mt-4 mb-3">Leave a comment</h3>
+          {% if user.is_authenticated %}
+          <form method="POST" action="{% url 'home:postComment' %}">
+            {% csrf_token %}
+            <div class=" p-2">
+                <div class="d-flex flex-row align-items-start"><img class="rounded-circle me-3" src="{% static 'images/download.jpg' %}" width="40">
+                <textarea class="form-control ml-1 shadow-none textarea" rows="5" name="comment" id="comment" rows="3" required></textarea></div>
+                <input type="hidden" name="post_pk" value="{{ post.pk }}">
+                <div class="mt-2 float-end" style="background-color:#495057">
+                  <button class="btn btn-sm shadow-none" type="submit" style="color:white;">Post comment</button>
+                </div>
+            </div>
+          </form>
+        {% else %}
+        <div class=" p-2">
+            <div class="d-flex flex-row align-items-start"><img class="rounded-circle me-3" src="{% static 'images/download.jpg' %}" width="40">
+            <textarea class="form-control ml-1 shadow-none textarea" rows="5" name="comment" id="comment" rows="3" required></textarea></div>
+            <input type="hidden" name="post_pk" value="{{ post.pk }}">
+            <div class="mt-2 float-end" style="background-color:#495057">
+              <a href="{% url 'accounts:login' %}" class="btn btn-sm shadow-none" role="button" style="color:white;">Login for comment</a>
+            </div>
+        </div>
+        {% endif%}
+      </div>
+
+    </div>
+
+    
+
+    <div class="col-md-4">
+      {% include 'home/trending_post.html' %}
+    </div>
+    
+  </div><!-- /.row -->
+
+</main><!-- /.container -->
+
+{% endblock body %}

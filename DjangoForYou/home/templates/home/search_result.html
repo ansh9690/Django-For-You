@@ -1,0 +1,45 @@
+{% extends 'home/base.html' %}
+{% load static %}
+{% block title %}Search Results{% endblock title %}
+{% block css %}
+
+{% endblock css %}
+
+{% block body %}
+<main class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <h3 class="pb-4 mb-4 mt-4 font-italic border-bottom">
+        Search Results
+      </h3>
+        {% if post %}
+          {% for post in post %}
+          <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            <div class="col p-4 d-flex flex-column position-static">
+              <h4 class="mb-2">{{ post.title }}</h4>
+              <p class="card-text mb-auto">{{ post.body| truncatechars:380 }}<a href="{% url 'home:post_detail' post.pk %}" class="stretched-link">...continue reading</a></p>
+              
+              <div class="post-meta">
+                <span class="d-block float-end"><a href="#">{{ post.author }}</a></span>
+                <span class="date-read">{{ post.timeStamp }} <span class="mx-1">•</span> 3 min read <span class="icon-star2"></span></span>
+              </div>
+            </div>
+            <div class="col-auto d-none d-lg-block">
+              <img class="bd-placeholder-img" width="200" height="250" src="{% static 'images/download.jpg' %}" style="filter: blur(3px);"></img>
+
+            </div>
+          </div> 
+          {% endfor %}
+        {% else %}
+          <p>Result not found..........</p>
+        {% endif %}   
+        </div>
+
+      <div class="col-md-4">
+        {% include 'home/trending_post.html' %}
+      </div>
+    
+  </div><!-- /.row -->
+
+</main><!-- /.container -->
+{% endblock body %}
